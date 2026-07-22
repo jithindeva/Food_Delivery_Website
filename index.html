@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="images/img_108.jpg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Food Buds - Order Food & Groceries</title>
+  <!-- FontAwesome for Premium Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Leaflet.js Real Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script type="module" src="./src/main.js"></script>
+  <link rel="stylesheet" href="./src/style.css">
+</head>
+
+<body>
+  <!-- App Header -->
+  <header class="main-header">
+    <div class="header-container">
+      <div class="header-left">
+        <div class="logo" id="logo-btn">
+          <div class="logo-icon"><i class="fa-solid fa-utensils"></i></div>
+          <span>Food Buds</span>
+        </div>
+        <div class="location-selector" id="location-trigger">
+          <i class="fa-solid fa-compass location-icon"></i>
+          <span class="location-text" id="current-location-text">Koramangala, Bangalore</span>
+          <i class="fa-solid fa-chevron-down location-arrow"></i>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <nav class="nav-links">
+          <span class="nav-link" id="nav-corporate-btn"><i class="fa-solid fa-briefcase"></i> Food Buds Corporate</span>
+          <span class="nav-link" id="nav-partner-btn"><i class="fa-solid fa-handshake"></i> Partner with us</span>
+        </nav>
+
+        <!-- Auth & Cart -->
+        <div id="auth-header-section">
+          <button class="btn-sign-in" id="header-signin-btn"><i class="fa-solid fa-user"></i> Sign In</button>
+        </div>
+
+        <div class="cart-icon-wrapper" id="cart-trigger">
+          <i class="fa-solid fa-bag-shopping"></i>
+          <span class="cart-badge" id="cart-count">0</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero & Search Section -->
+  <section class="hero-section">
+    <!-- Glow blobs in background -->
+    <div class="hero-bg-blobs">
+      <div class="blob blob-1"></div>
+      <div class="blob blob-2"></div>
+      <div class="blob blob-3"></div>
+    </div>
+
+    <div class="hero-container">
+      <h1 class="hero-title">Order food & groceries. Discover best restaurants. Food Buds it!</h1>
+
+      <!-- Search Bars -->
+      <div class="search-bars-container">
+        <div class="search-location-wrapper">
+          <i class="fa-solid fa-location-dot search-icon-input"></i>
+          <input type="text" id="hero-location-input" placeholder="Enter delivery location..."
+            value="Koramangala, Bangalore" />
+        </div>
+        <div class="search-item-wrapper">
+          <i class="fa-solid fa-magnifying-glass search-icon-input"></i>
+          <input type="text" id="hero-search-input" placeholder="Search for restaurant, grocery or dishes..." />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Top Tab Selector Cards -->
+  <div class="category-tabs-container">
+    <div class="tab-card active" id="tab-food" data-tab="food">
+      <div class="tab-card-info">
+        <h3>FOOD DELIVERY</h3>
+        <p>FROM RESTAURANTS</p>
+        <span class="tab-card-badge">UPTO 60% OFF</span>
+      </div>
+      <img src="images/img_105.jpg" alt="Food Delivery" class="tab-card-img" />
+      <div class="tab-card-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+    </div>
+    <div class="tab-card" id="tab-grocery" data-tab="grocery">
+      <div class="tab-card-info">
+        <h3>INSTAMART</h3>
+        <p>INSTANT GROCERY</p>
+        <span class="tab-card-badge">UPTO 60% OFF</span>
+      </div>
+      <img src="images/img_106.jpg" alt="Instamart" class="tab-card-img" />
+      <div class="tab-card-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+    </div>
+    <div class="tab-card" id="tab-dineout" data-tab="dineout">
+      <div class="tab-card-info">
+        <h3>DINEOUT</h3>
+        <p>EAT OUT & SAVE MORE</p>
+        <span class="tab-card-badge">UPTO 50% OFF</span>
+      </div>
+      <img src="images/img_107.jpg" alt="Dineout" class="tab-card-img" />
+      <div class="tab-card-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+    </div>
+  </div>
+
+  <!-- Main Content Rendering Hub -->
+  <main class="content-section" id="dynamic-content">
+    <!-- Injected Dynamically by app.js -->
+  </main>
+
+  <!-- Slide-out Cart Drawer -->
+  <div class="cart-drawer-backdrop" id="cart-drawer-backdrop">
+    <div class="cart-drawer">
+      <div class="cart-header">
+        <h3>My Cart</h3>
+        <button class="cart-close-btn" id="cart-close-btn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="cart-body">
+        <div id="cart-items-container">
+          <!-- Dynamic Cart Items list -->
+        </div>
+
+        <!-- Coupon Code Block -->
+        <div class="coupon-section">
+          <label style="display:block; font-size:12px; font-weight:600; margin-bottom:6px;">Apply Coupon Code</label>
+          <div class="coupon-input-wrapper">
+            <input type="text" id="coupon-code-input" placeholder="Try SWIGGY60" style="text-transform: uppercase;" />
+            <button class="btn-apply-coupon" id="btn-apply-coupon">Apply</button>
+          </div>
+          <div class="coupon-message" id="coupon-message"></div>
+        </div>
+
+        <!-- Checkout Price Breakdowns -->
+        <div class="price-summary" id="price-summary-box" style="display: none;">
+          <div class="summary-row">
+            <span>Item Total</span>
+            <span id="price-items">₹0</span>
+          </div>
+          <div class="summary-row" id="coupon-discount-row" style="display: none;">
+            <span>Coupon Discount (SWIGGY60)</span>
+            <span id="price-discount" style="color:var(--success)">-₹0</span>
+          </div>
+          <div class="summary-row">
+            <span>Delivery Partner Fee</span>
+            <span id="price-delivery">₹40</span>
+          </div>
+          <div class="summary-row">
+            <span>Platform Fee</span>
+            <span>₹5</span>
+          </div>
+          <div class="summary-row total">
+            <span>Grand Total</span>
+            <span id="price-grand">₹0</span>
+          </div>
+        </div>
+      </div>
+      <div class="cart-footer">
+        <button class="btn-checkout" id="cart-checkout-btn">Proceed to Checkout</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Layouts -->
+
+  <!-- 1. Authentication Modal (Sign In / Register) -->
+  <div class="modal-backdrop" id="auth-modal">
+    <div class="modal-content glassmorphic-modal">
+      <button class="modal-close-btn" id="auth-modal-close"><i class="fa-solid fa-xmark"></i></button>
+      <div class="auth-container">
+        <div class="auth-header">
+          <h2 id="auth-title">Sign In</h2>
+          <p id="auth-subtitle">Verify your account to order delicious meals</p>
+        </div>
+        <form id="auth-form">
+          <div class="auth-form-group">
+            <label for="auth-phone">Phone Number or Email</label>
+            <input type="text" id="auth-phone" placeholder="Enter phone/email" required />
+          </div>
+          <div class="auth-form-group" id="auth-password-group">
+            <label for="auth-password">Password / OTP Code</label>
+            <input type="password" id="auth-password" placeholder="Enter password (any value works)" required />
+          </div>
+          <button type="submit" class="btn-auth-submit" id="auth-submit-btn">Verify Account</button>
+        </form>
+        <div class="auth-footer">
+          <span id="auth-toggle-text">New to Swiggy?</span>
+          <button class="auth-toggle-link" id="auth-toggle-btn">Create an account</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Restaurant Detail Menu Modal -->
+  <div class="modal-backdrop" id="menu-modal">
+    <div class="modal-content" style="max-width: 700px;">
+      <button class="modal-close-btn" id="menu-modal-close"
+        style="color:var(--white); text-shadow:0 2px 4px rgba(0,0,0,0.5);"><i class="fa-solid fa-xmark"></i></button>
+      <div class="restaurant-menu-header" id="menu-hero-bg">
+        <div class="restaurant-menu-overlay">
+          <div class="restaurant-menu-meta">
+            <h2 id="menu-restaurant-name">The Biryani Club</h2>
+            <p id="menu-restaurant-cuisines">North Indian, Mughlai</p>
+          </div>
+        </div>
+      </div>
+      <div class="restaurant-menu-body" id="menu-items-body">
+        <!-- Dynamic Items list categories injection -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Checkout & Payment Wizard Modal -->
+  <div class="modal-backdrop" id="checkout-modal">
+    <div class="modal-content" style="max-width: 600px;">
+      <button class="modal-close-btn" id="checkout-modal-close"><i class="fa-solid fa-xmark"></i></button>
+      <div style="padding: 32px;">
+        <h2 style="font-size:24px; font-weight:800; margin-bottom:24px;">Secure Checkout</h2>
+
+        <!-- Wizard Steps Stepper -->
+        <div class="checkout-steps">
+          <div class="step-indicator active" id="step-1-tab">
+            <div class="step-dot">1</div>
+            <span>Address</span>
+          </div>
+          <div class="step-indicator" id="step-2-tab">
+            <div class="step-dot">2</div>
+            <span>Payment</span>
+          </div>
+        </div>
+
+        <form id="checkout-wizard-form">
+          <!-- Step 1: Address Details -->
+          <div class="checkout-section active" id="checkout-step-address">
+            <h3 style="font-size:16px; margin-bottom:16px;">Delivery Address</h3>
+            <div class="auth-form-group">
+              <label>Full Name</label>
+              <input type="text" id="chk-name" value="Jane Doe" required />
+            </div>
+            <div class="auth-form-group">
+              <label>Flat / House No. & Building</label>
+              <input type="text" id="chk-house" value="Flat 405, Block B, Royal Palms" required />
+            </div>
+            <div class="auth-form-group">
+              <label>Area / Landmark</label>
+              <input type="text" id="chk-area" value="Near Koramangala Post Office" required />
+            </div>
+            <div class="auth-form-group">
+              <label>Pincode</label>
+              <input type="text" id="chk-pin" value="560034" required />
+            </div>
+          </div>
+
+          <!-- Step 2: Payment Details -->
+          <div class="checkout-section" id="checkout-step-payment">
+            <h3 style="font-size:16px; margin-bottom:12px;">Choose Payment Method</h3>
+            <div class="payment-methods-list">
+              <div class="payment-card active" data-method="upi">
+                <i class="fa-solid fa-qrcode payment-card-icon"></i>
+                <div class="payment-card-info">
+                  <h4>UPI (Google Pay, PhonePe, Paytm)</h4>
+                  <p>Instant scan and pay options</p>
+                </div>
+              </div>
+              <div class="payment-card" data-method="card">
+                <i class="fa-solid fa-credit-card payment-card-icon"></i>
+                <div class="payment-card-info">
+                  <h4>Credit / Debit Cards</h4>
+                  <p>Visa, MasterCard, RuPay supported</p>
+                </div>
+              </div>
+              <div class="payment-card" data-method="cod">
+                <i class="fa-solid fa-hand-holding-dollar payment-card-icon"></i>
+                <div class="payment-card-info">
+                  <h4>Cash on Delivery (COD)</h4>
+                  <p>Pay cash or UPI at delivery doorstep</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Inline card details inputs -->
+            <div class="payment-details-subform" id="card-subform" style="display:none;">
+              <div class="auth-form-group">
+                <label>Card Number</label>
+                <input type="text" placeholder="1234 5678 9876 5432" id="chk-card-num" />
+              </div>
+              <div style="display:flex; gap:12px;">
+                <div class="auth-form-group" style="flex:1;">
+                  <label>Expiry Date</label>
+                  <input type="text" placeholder="MM/YY" id="chk-card-exp" />
+                </div>
+                <div class="auth-form-group" style="flex:1;">
+                  <label>CVV</label>
+                  <input type="password" placeholder="***" id="chk-card-cvv" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Inline UPI instruction -->
+            <div class="payment-details-subform" id="upi-subform">
+              <div
+                style="display:flex; align-items:center; gap:16px; background-color:#F5FDF5; border:1px solid #DDF0DD; padding:12px; border-radius:8px;">
+                <i class="fa-solid fa-circle-check" style="color:var(--success)"></i>
+                <p style="font-size:12px; color:var(--text-muted)">Scan QR or approve transaction in your UPI App upon
+                  placing order.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Navigation Buttons -->
+          <div class="checkout-nav-btns">
+            <button type="button" class="btn-checkout-prev" id="btn-checkout-prev"
+              style="visibility: hidden;">Back</button>
+            <button type="button" class="btn-checkout-next" id="btn-checkout-next">Proceed to Payment</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Dynamic Order Tracker & Delivery Progress -->
+  <div class="modal-backdrop" id="tracker-modal">
+    <div class="modal-content" style="max-width: 500px;">
+      <!-- Simple Confetti Canvas layer -->
+      <div class="confetti-canvas" id="confetti-holder"></div>
+
+      <button class="modal-close-btn" id="tracker-modal-close" style="display:none;"><i
+          class="fa-solid fa-xmark"></i></button>
+
+      <!-- Processing State -->
+      <div id="tracker-loading-state" class="payment-processing-overlay">
+        <div class="spinner"></div>
+        <h3>Processing Payment</h3>
+        <p style="color:var(--text-muted); font-size:14px; margin-top:8px;">Verifying credentials with bank secure
+          gateway...</p>
+      </div>
+
+      <!-- Success Celebration Overlay -->
+      <div id="tracker-success-state" class="payment-processing-overlay" style="display:none;">
+        <div class="success-check-wrapper">
+          <i class="fa-solid fa-check success-check-icon"></i>
+        </div>
+        <h2 style="font-size:26px; font-weight:800; color:var(--success)">Order Placed!</h2>
+        <p style="color:var(--text-muted); font-size:14px; margin-top:8px; margin-bottom:24px;">Your order has been
+          accepted by the kitchen.</p>
+        <button class="btn-checkout-next" id="btn-start-tracking"
+          style="flex:none; width:auto; padding:12px 32px;">Track Live Delivery</button>
+      </div>
+
+      <!-- Live Tracker State -->
+      <div id="tracker-live-state" class="tracking-wrapper" style="display:none;">
+        <div class="tracking-header">
+          <h2>Tracking Delivery</h2>
+          <p>Estimated Delivery: <strong style="color:var(--primary)" id="tracker-eta">25 Mins</strong></p>
+        </div>
+
+        <!-- Real OpenStreetMap via Leaflet -->
+        <div id="live-map"
+          style="width:100%; height:260px; border-radius:16px; overflow:hidden; border:2px solid var(--border-color); margin-bottom:12px;">
+        </div>
+
+        <!-- Vertical Timeline Stages -->
+        <div class="tracking-timeline">
+          <div class="timeline-step completed" id="track-step-placed">
+            <div class="timeline-icon"><i class="fa-solid fa-circle-check"></i></div>
+            <div class="timeline-content">
+              <h4>Order Placed</h4>
+              <p>Payment approved successfully</p>
+            </div>
+          </div>
+          <div class="timeline-step active" id="track-step-kitchen">
+            <div class="timeline-icon"><i class="fa-solid fa-fire-burner"></i></div>
+            <div class="timeline-content">
+              <h4>In Kitchen</h4>
+              <p>Restaurant is preparing your delicious meal</p>
+            </div>
+          </div>
+          <div class="timeline-step" id="track-step-delivery">
+            <div class="timeline-icon"><i class="fa-solid fa-motorcycle"></i></div>
+            <div class="timeline-content">
+              <h4>Out for Delivery</h4>
+              <p>Delivery rider is heading to your location</p>
+            </div>
+          </div>
+          <div class="timeline-step" id="track-step-completed">
+            <div class="timeline-icon"><i class="fa-solid fa-house-chimney-user"></i></div>
+            <div class="timeline-content">
+              <h4>Delivered</h4>
+              <p>Enjoy your food!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Train PNR Delivery Search Result Modal -->
+  <div class="modal-backdrop" id="pnr-modal">
+    <div class="modal-content" style="max-width: 600px;">
+      <button class="modal-close-btn" id="pnr-modal-close"><i class="fa-solid fa-xmark"></i></button>
+      <div style="padding: 32px;">
+        <h2 style="font-size:22px; font-weight:800; margin-bottom:6px;"><i class="fa-solid fa-train"
+            style="color:var(--primary)"></i> Train Food Delivery</h2>
+        <p style="color:var(--text-muted); font-size:14px; margin-bottom:24px;" id="pnr-modal-info">Station details and
+          available restaurants</p>
+
+        <div id="pnr-restaurants-container">
+          <!-- Dynamic Train Restaurants injected here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. About Us Modal -->
+  <div class="modal-backdrop" id="about-modal">
+    <div class="modal-content glassmorphic-modal" style="max-width: 500px;">
+      <button class="modal-close-btn" id="about-modal-close"><i class="fa-solid fa-xmark"></i></button>
+      <div style="padding: 40px; text-align: center;">
+        <i class="fa-solid fa-utensils" style="font-size: 48px; color: var(--primary); margin-bottom: 20px;"></i>
+        <h2 style="font-size: 28px; font-weight: 800; margin-bottom: 12px;">About Food Buds</h2>
+        <p style="color: var(--text-dark); font-weight: 500; font-size: 15px; margin-bottom: 16px; line-height: 1.6;">
+          Food Buds is a next-generation food delivery, instant grocery, and gourmet dine-out booking platform built to
+          satisfy your every craving instantly.
+        </p>
+        <p
+          style="color: var(--text-muted); font-size: 13px; line-height: 1.6; text-align: justify; margin-bottom: 24px;">
+          Founded in 2026, our mission is to connect food lovers with premium culinary experiences in their local
+          neighborhoods and on the move. Whether you are seeking a quick 10-minute Bolt snack delivery, a
+          budget-friendly 99-store meal, fresh groceries delivered directly to your doorstep via Instamart, or
+          custom-cooked dishes delivered directly to your train coach seat, Food Buds has you covered.
+        </p>
+        <div style="font-size: 13px; font-weight: 700; color: var(--primary);">
+          Version 2.4.0 (Mesh Upgrades) <br> © 2026 Food Buds Pvt. Ltd. All rights reserved.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="footer-container">
+      <div class="footer-col" style="grid-column: span 1;">
+        <div class="footer-logo">
+          <i class="fa-solid fa-utensils" style="color:var(--primary)"></i> Food Buds
+        </div>
+        <p style="font-size:14px; margin-bottom:24px;">© 2026 Food Buds Pvt. Ltd</p>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#" id="footer-about-btn">About us</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Team</a></li>
+          <li><a href="#">Food Buds One</a></li>
+          <li><a href="#">Food Buds Instamart</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact us</h4>
+        <ul>
+          <li><a href="#">Help & Support</a></li>
+          <li><a href="#">Partner with us</a></li>
+          <li><a href="#">Ride with us</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>We deliver to:</h4>
+        <ul>
+          <li><a href="#">Bangalore</a></li>
+          <li><a href="#">Gurgaon</a></li>
+          <li><a href="#">Bhubaneswar</a></li>
+          <li><a href="#">Mumbai</a></li>
+          <li><a href="#">Pune</a></li>
+          <li><a href="#">Kolkata</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>Built with ❤️ by Antigravity AI Coding Assistant.</p>
+      <div style="display:flex; gap:20px; font-size:18px;">
+        <a href="#"><i class="fa-brands fa-facebook"></i></a>
+        <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="#"><i class="fa-brands fa-instagram"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Application Script -->
+</body>
+
+</html>
